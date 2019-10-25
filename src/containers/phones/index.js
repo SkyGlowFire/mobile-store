@@ -3,17 +3,24 @@ import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import * as R from 'ramda'
 
-import {fetchPhones, loadMorePhones} from '../../actions'
+import {
+    fetchPhones,
+    loadMorePhones,
+    addPhoneToBasket,
+    fetchCategories
+} from '../../actions'
 import {getPhones} from '../../selectors'
 import Layout from './../layout'
 
 class Phones extends Component {
     componentDidMount () {
-        this.props.fetchPhones()
+        this.props.fetchPhones();
+            this.props.fetchCategories()
     }
 
      renderPhone(phone, index) {
-        const shortDescription = `${R.take(60, phone.description)}...`;
+        const shortDescription = `${R.take(60, phone.description)}...`
+         const {addPhoneToBasket} = this.props
         return (
                 <div className='col-sm-4 col-lg-4 col-md-4 book-list' key={index}>
                     <div className='thumbnail'>
@@ -31,7 +38,10 @@ class Phones extends Component {
                             </h4>
                             <p>{shortDescription}</p>
                             <p className='itemButton'>
-                                <button className='btn btn-primary'>
+                                <button
+                                    className='btn btn-primary'
+                                    onClick={() => addPhoneToBasket(phone.id)}
+                                >
                                     Buy Now!
                                 </button>
                                 <Link
@@ -73,11 +83,13 @@ class Phones extends Component {
 
 const mapDispatchToProps = {
     fetchPhones,
-    loadMorePhones
+    loadMorePhones,
+    addPhoneToBasket,
+    fetchCategories
 };
 
-const mapStateToProps = state => ({
-    phones: getPhones(state)
+const mapStateToProps = (state, ownProps) => ({
+    phones: getPhones(state, ownProps)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Phones)
